@@ -1,0 +1,11 @@
+1) Create and conect To Do with Firebase (make some dummy data base, for practice with fetch apy and async code)
+2) Finish all logical part with btn (copy/rename/filter)
+3) Add date for task (firstyl for header, and after that for each task)
+5) For button remove (togle a new modal, for confirming if client want to remove task)
+6) Create a new modal for renaming task (because i want add some more data for this contentList)
+6) Work with reusability of callback function for addEventListener
+4) Work with css: 1)Adaptive style
+		  2)Add to content scroll
+		  3)Change color (make more fancy)
+		  4)Add for all button some animation 
+		  5)Change style for input (little bit broke)
