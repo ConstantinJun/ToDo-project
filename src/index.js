@@ -64,8 +64,11 @@ const clearInput = () => {
 
 const search = (event) => {
   const ref = event.target.closest('span').previousElementSibling
-  console.log(ref.value);
-  tasks.forEach(task => )
+  const referenceValue = tasks.filter((item) => {
+    return item.task.toLowerCase().includes(ref.value);
+})
+createLiRef(...referenceValue)
+ref.value = "";
 }
 
 
@@ -107,7 +110,7 @@ const createLiRef = (elem) => {
 
   listElementContent.classList = "list--element-content";
   listElementBtns.classList = "list--element-btn";
-  li.classList = "content-list";
+  li.classList = `content-list ${elem.task}`;
   div.classList = "list--element";
   removeButton1.classList = "remove--btn";
   renameButton1.classList = "rename--btn";
@@ -127,7 +130,6 @@ const createLiRef = (elem) => {
   div.append(listElementContent, listElementBtns);
   li.appendChild(div);
   contentLists.appendChild(li);
-  console.log(li);
 };
 
 
