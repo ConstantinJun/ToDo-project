@@ -21,7 +21,7 @@ const addTaskBtn = cancelAddTask.nextElementSibling;
 
 const tasks = [
   {
-    id: 1,
+    id:`${Math.random()}`,
     task: "ma duc sa ma plimb",
   },
 ];
@@ -35,12 +35,22 @@ const taskUi = [];
 //-----------------------------------------------------------
 const removeFunc = (event) => {
   const elementToRemove = event.target.closest("li");
+  const dataId = elementToRemove.getAttribute('data-id');
+  const arrId = tasks.findIndex(el=> el.id === dataId);
+  const arrUiId = tasks.findIndex(el =>el.id === dataId);
+  taskUi.splice(arrUiId, 1),
+  tasks.splice(arrId);
   elementToRemove.remove();
 };
 
 const copyFunc = (event) => {
   const elementToCopy = event.target.closest("li");
   const newLi = elementToCopy.cloneNode(true);
+  const dataId = Math.random();
+  newLi.setAttribute('data-id',`${dataId}`)
+  const textOfNewLi = newLi.querySelector('p').textContent;
+  tasks.push({id:`${dataId}`, task: textOfNewLi});
+  taskUi.push({id:`${dataId}`,taskUi: newLi});
   newLi.querySelector(".remove--btn").addEventListener("click", removeFunc);
   newLi.querySelector(".rename--btn").addEventListener("click", renameFunc);
   newLi.querySelector(".copy--btn").addEventListener("click", copyFunc);
@@ -49,13 +59,25 @@ const copyFunc = (event) => {
 
 const renameFunc = (event) => {
   const textOutput = prompt("Rename");
-  if (textOutput.trim() === "") {
+  if (textOutput.trim() === "" && textOutput === null) {
     return;
   }
   const referenceNode = event.target.closest("div");
-  referenceNode.previousElementSibling.querySelector("p").textContent =
-    textOutput;
+  const referenceLi = event.target.closest('li');
+  const idLi = referenceLi.getAttribute('data-id');
+  tasks.forEach(el=>{if(el.id === idLi){
+    el.task = textOutput;
+  }})
+  referenceNode.previousElementSibling.querySelector("p").textContent = textOutput;
+  
 };
+
+
+const checkFunc = (event)=>{
+  const elementToCopy = event.target.closest("li");
+  const paragraph = elementToCopy.querySelector('p');
+  paragraph.classList.toggle('complete');
+}
 //----------------------------------------------------------- Functional for Event Btn
 
 const clearInput = () => {
@@ -63,18 +85,12 @@ const clearInput = () => {
 };
 
 const search = (event) => {
-  const child = contentLists.querySelectorAll("li");
   const ref = event.target.closest("span").previousElementSibling;
-  if(ref.value!==''){
-    const referenceValue = tasks.filter((item) => {
-      return item.task.toLowerCase().includes(ref.value);
+  if(ref.value.trim() !== ''){
+    const referenceValue = taskUi.filter((item) => {
+      return !item.taskUi.querySelector('p').textContent.toLowerCase().includes(ref.value.toLowerCase().trim());
     });
-    const resultLi = referenceValue
-      .map((elemV) => {
-        return taskUi.filter((elem) => elem.id !== elemV.id);
-      })
-      .flat(1);
-    resultLi.map((el) => {
+    referenceValue.map((el) => {
       el.taskUi.remove();
     });
     ref.value = "";
@@ -140,6 +156,7 @@ const createLiRef = (elem) => {
   renameButton1.appendChild(renameImg);
   copyButton1.appendChild(copyImg);
 
+  cehckButton.addEventListener('click', checkFunc);
   removeButton1.addEventListener("click", removeFunc);
   renameButton1.addEventListener("click", renameFunc);
   copyButton1.addEventListener("click", copyFunc);

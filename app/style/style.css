@@ -304,6 +304,10 @@ header {
   column-gap: 5px;
 }
 
+.list--element-content .complete{
+  text-decoration: line-through;
+}
+
 .list--element-btn {
   display: flex;
   flex-direction: row;
