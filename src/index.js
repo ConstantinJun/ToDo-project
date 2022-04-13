@@ -19,12 +19,14 @@ const addTaskBtn = cancelAddTask.nextElementSibling;
 
 //-----------------------------------------------------------
 
-let tasks = [
+const tasks = [
   {
-    id: Math.random().toString(),
-    task: 'ma duc sa ma plimb',
+    id: 1,
+    task: "ma duc sa ma plimb",
   },
 ];
+
+const taskUi = [];
 
 //-----------------------------------------------------------
 
@@ -56,30 +58,47 @@ const renameFunc = (event) => {
 };
 //----------------------------------------------------------- Functional for Event Btn
 
-
 const clearInput = () => {
   taskInput.value = "";
 };
 
-
 const search = (event) => {
-  const ref = event.target.closest('span').previousElementSibling
-  const referenceValue = tasks.filter((item) => {
-    return item.task.toLowerCase().includes(ref.value);
-})
-createLiRef(...referenceValue)
-ref.value = "";
-}
+  const child = contentLists.querySelectorAll("li");
+  const ref = event.target.closest("span").previousElementSibling;
+  if(ref.value!==''){
+    const referenceValue = tasks.filter((item) => {
+      return item.task.toLowerCase().includes(ref.value);
+    });
+    const resultLi = referenceValue
+      .map((elemV) => {
+        return taskUi.filter((elem) => elem.id !== elemV.id);
+      })
+      .flat(1);
+    resultLi.map((el) => {
+      el.taskUi.remove();
+    });
+    ref.value = "";
+  }else{
+    taskUi.forEach((elem) => appendUi(elem.taskUi));
+  }
+};
 
+const appendUi = (refli) => {
+  contentLists.appendChild(refli);
+};
 
-const renderUI = ()=> {
-if(tasks.length === 0){
-  return console.log('nu sunt elemente')
-}
-tasks.forEach((elem)=>{
-  createLiRef(elem);
-})
-}
+const renderUI = () => {
+  if (tasks.length === 0) {
+    console.log("nu sunt elemente");
+    return;
+  }
+  if (tasks.length > 0) {
+    tasks.forEach((elem) => {
+      createLiRef(elem);
+    });
+    taskUi.forEach((elem) => appendUi(elem.taskUi));
+  }
+};
 
 const createLiRef = (elem) => {
   const li = document.createElement("li");
@@ -110,7 +129,7 @@ const createLiRef = (elem) => {
 
   listElementContent.classList = "list--element-content";
   listElementBtns.classList = "list--element-btn";
-  li.classList = `content-list ${elem.task}`;
+  li.classList = `content-list`;
   div.classList = "list--element";
   removeButton1.classList = "remove--btn";
   renameButton1.classList = "rename--btn";
@@ -129,10 +148,13 @@ const createLiRef = (elem) => {
   listElementBtns.append(renameButton1, copyButton1, removeButton1);
   div.append(listElementContent, listElementBtns);
   li.appendChild(div);
-  contentLists.appendChild(li);
+  li.setAttribute("data-id", elem.id);
+  taskUi.push({
+    id: elem.id,
+    taskUi: li,
+  });
+  return li;
 };
-
-
 
 const addTasks = () => {
   if (taskInput.value.trim() === "") {
@@ -145,7 +167,8 @@ const addTasks = () => {
     task: textContent,
   };
   tasks.push(newTask);
-  createLiRef(newTask)
+  const li = createLiRef(newTask);
+  appendUi(li);
   clearInput();
   modalHandler();
 };
@@ -169,7 +192,6 @@ cancelAddTask.addEventListener("click", cancelTaskHandler);
 addTaskBtn.addEventListener("click", addTasks);
 renderUI();
 
-searchButton.addEventListener('click',search)
+searchButton.addEventListener("click", search);
 
 //-----------------------------------------------------------Creating li and work with add btn and modal
-
