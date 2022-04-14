@@ -17,7 +17,7 @@ const cancelAddTask = modal.querySelector(".btn--passive");
 const taskInput = modal.querySelector("input");
 const addTaskBtn = cancelAddTask.nextElementSibling;
 
-//-----------------------------------------------------------
+//----------------------------------------------------------- Main logic function
 
 const tasks = [
   {
@@ -28,76 +28,7 @@ const tasks = [
 
 const taskUi = [];
 
-//-----------------------------------------------------------
 
-//search function
-
-//-----------------------------------------------------------
-const removeFunc = (event) => {
-  const elementToRemove = event.target.closest("li");
-  const dataId = elementToRemove.getAttribute('data-id');
-  const arrId = tasks.findIndex(el=> el.id === dataId);
-  const arrUiId = tasks.findIndex(el =>el.id === dataId);
-  taskUi.splice(arrUiId, 1),
-  tasks.splice(arrId);
-  elementToRemove.remove();
-};
-
-const copyFunc = (event) => {
-  const elementToCopy = event.target.closest("li");
-  const newLi = elementToCopy.cloneNode(true);
-  const dataId = Math.random();
-  newLi.setAttribute('data-id',`${dataId}`)
-  const textOfNewLi = newLi.querySelector('p').textContent;
-  tasks.push({id:`${dataId}`, task: textOfNewLi});
-  taskUi.push({id:`${dataId}`,taskUi: newLi});
-  newLi.querySelector(".remove--btn").addEventListener("click", removeFunc);
-  newLi.querySelector(".rename--btn").addEventListener("click", renameFunc);
-  newLi.querySelector(".copy--btn").addEventListener("click", copyFunc);
-  contentLists.appendChild(newLi);
-};
-
-const renameFunc = (event) => {
-  const textOutput = prompt("Rename");
-  if (textOutput.trim() === "" && textOutput === null) {
-    return;
-  }
-  const referenceNode = event.target.closest("div");
-  const referenceLi = event.target.closest('li');
-  const idLi = referenceLi.getAttribute('data-id');
-  tasks.forEach(el=>{if(el.id === idLi){
-    el.task = textOutput;
-  }})
-  referenceNode.previousElementSibling.querySelector("p").textContent = textOutput;
-  
-};
-
-
-const checkFunc = (event)=>{
-  const elementToCopy = event.target.closest("li");
-  const paragraph = elementToCopy.querySelector('p');
-  paragraph.classList.toggle('complete');
-}
-//----------------------------------------------------------- Functional for Event Btn
-
-const clearInput = () => {
-  taskInput.value = "";
-};
-
-const search = (event) => {
-  const ref = event.target.closest("span").previousElementSibling;
-  if(ref.value.trim() !== ''){
-    const referenceValue = taskUi.filter((item) => {
-      return !item.taskUi.querySelector('p').textContent.toLowerCase().includes(ref.value.toLowerCase().trim());
-    });
-    referenceValue.map((el) => {
-      el.taskUi.remove();
-    });
-    ref.value = "";
-  }else{
-    taskUi.forEach((elem) => appendUi(elem.taskUi));
-  }
-};
 
 const appendUi = (refli) => {
   contentLists.appendChild(refli);
@@ -166,12 +97,98 @@ const createLiRef = (elem) => {
   div.append(listElementContent, listElementBtns);
   li.appendChild(div);
   li.setAttribute("data-id", elem.id);
+  li.setAttribute('draggable', true);
   taskUi.push({
     id: elem.id,
     taskUi: li,
   });
   return li;
 };
+
+
+//----------------------------------------------------------- helpul function
+
+const clearInput = () => {
+  taskInput.value = "";
+};
+
+const connectDrag = ()=>{
+    li.addEventListener('dragstart',event=>{
+      event.dataTransfer.setData('text/plain', elem.id);
+      event.dataTransfer.effectAllowed = 'move';
+    })
+}
+
+
+const connectDropArea = () =>{
+ contentLists.addEventListener('dragenter', event=> event.preventDefault());
+ contentLists.addEventListener('dragover', event=> event.preventDefault());
+}
+
+
+//----------------------------------------------------------- button function
+const removeFunc = (event) => {
+  const elementToRemove = event.target.closest("li");
+  const dataId = elementToRemove.getAttribute('data-id');
+  const arrId = tasks.findIndex(el=> el.id === dataId);
+  const arrUiId = tasks.findIndex(el =>el.id === dataId);
+  taskUi.splice(arrUiId, 1),
+  tasks.splice(arrId);
+  elementToRemove.remove();
+};
+
+const copyFunc = (event) => {
+  const elementToCopy = event.target.closest("li");
+  const newLi = elementToCopy.cloneNode(true);
+  const dataId = Math.random();
+  newLi.setAttribute('data-id',`${dataId}`)
+  const textOfNewLi = newLi.querySelector('p').textContent;
+  tasks.push({id:`${dataId}`, task: textOfNewLi});
+  taskUi.push({id:`${dataId}`,taskUi: newLi});
+  newLi.querySelector(".remove--btn").addEventListener("click", removeFunc);
+  newLi.querySelector(".rename--btn").addEventListener("click", renameFunc);
+  newLi.querySelector(".copy--btn").addEventListener("click", copyFunc);
+  contentLists.appendChild(newLi);
+};
+
+const renameFunc = (event) => {
+  const textOutput = prompt("Rename");
+  if (textOutput.trim() === "" && textOutput === null) {
+    return;
+  }
+  const referenceNode = event.target.closest("div");
+  const referenceLi = event.target.closest('li');
+  const idLi = referenceLi.getAttribute('data-id');
+  tasks.forEach(el=>{if(el.id === idLi){
+    el.task = textOutput;
+  }})
+  referenceNode.previousElementSibling.querySelector("p").textContent = textOutput;
+  
+};
+
+
+const checkFunc = (event)=>{
+  const elementToCopy = event.target.closest("li");
+  const paragraph = elementToCopy.querySelector('p');
+  paragraph.classList.toggle('complete');
+}
+
+
+const search = (event) => {
+  const ref = event.target.closest("span").previousElementSibling;
+  if(ref.value.trim() !== ''){
+    const referenceValue = taskUi.filter((item) => {
+      return !item.taskUi.querySelector('p').textContent.toLowerCase().includes(ref.value.toLowerCase().trim());
+    });
+    referenceValue.map((el) => {
+      el.taskUi.remove();
+    });
+    ref.value = "";
+  }else{
+    taskUi.forEach((elem) => appendUi(elem.taskUi));
+  }
+};
+//----------------------------------------------------------- Add task function
 
 const addTasks = () => {
   if (taskInput.value.trim() === "") {
@@ -189,6 +206,8 @@ const addTasks = () => {
   clearInput();
   modalHandler();
 };
+
+//----------------------------------------------------------- Other function
 
 const backDropHandler = () => {
   backDrop.classList.toggle("visible");

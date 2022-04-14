@@ -1,7 +1,7 @@
 1) Create and conect To Do with Firebase (make some dummy data base, for practice with fetch apy and async code)
-2) For button remove (togle a new modal, for confirming if client want to remove task)
-2.1) add check button
-3) Create a new modal for renaming task (because i want add some more data for this contentList)
-4) Work with css: 1)Adaptive style
+2) Make drag and drop;
+3) For button remove (togle a new modal, for confirming if client want to remove task)
+4) Create a new modal for renaming task (because i want add some more data for this contentList)
+5) Work with css: 1)Adaptive style
 		  1)Change color (make more fancy)
 		  2)Add for all button some animation 
