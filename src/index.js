@@ -123,6 +123,9 @@ const connectDrag = ()=>{
 const connectDropArea = () =>{
  contentLists.addEventListener('dragenter', event=> event.preventDefault());
  contentLists.addEventListener('dragover', event=> event.preventDefault());
+ contentList.addEventListener('drop', event => {
+
+ })
 }
 
 
